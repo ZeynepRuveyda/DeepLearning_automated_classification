@@ -6,7 +6,7 @@ from zipfile import ZipFile
 import shutil
 import cv2
 from sklearn.model_selection import train_test_split
-
+import time
 
 # Creating csv files for all image with their classes. Classes will be added as folder name of image .
 # Getting all images into a one folder
@@ -48,7 +48,7 @@ def create_dataset(dir_zip):
         latest_file_name = Path(latest_file).stem
 
         if file_extension in image_types:
-            name = latest_file_name + '_' + Path(image_path).stem
+            name = latest_file_name + '_' + Path(image_path).stem + file_extension
             names.append(name)
             labels.append(latest_file_name)
 
@@ -73,14 +73,14 @@ def test_train_split(df_dir):
     return train_df,test_df
 
 def balance_check(train_df):
-    print("")
     counts = train_df.label.value_counts()
     count_dict = counts.to_dict()
     list_count = list(count_dict.values())
     if all(x == list_count[0] for x in list_count) == False:
-        print("Data is not balance. Balancing process is started.")
+        print("Training data is not balance.")
+        time.sleep(3.0)
         return False
     else:
-        print("Data is balance.")
+        print("Training data is balance.")
         return True
 
