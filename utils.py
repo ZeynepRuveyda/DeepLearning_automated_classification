@@ -3,34 +3,84 @@ import os
 import pandas as pd
 from pathlib import Path
 from zipfile import ZipFile
+import shutil
+import cv2
+from sklearn.model_selection import train_test_split
 
-# Creating csv files for all image with their classes. Classes will be added as folder of image name.
-def create_csv_file(dir_zip):
+
+# Creating csv files for all image with their classes. Classes will be added as folder name of image .
+# Getting all images into a one folder
+# Return two data csv and all images data path.
+
+def create_dataset(dir_zip):
+    image_types = ['.png', '.jpg', '.jpeg', '.tiff', '.bmp']
     with ZipFile(dir_zip, 'r') as zipObj:
         # Get list of files names in zip
-        file_paths = zipObj.namelist()
-    # returning all file paths
+        folder_paths = zipObj.namelist()
+        parent = Path(dir_zip).parent
+        path_all_images = os.path.join(os.path.expanduser('~'), parent, 'ALL_IMAGES')
+        zipObj.extractall(path_all_images)
+
+    img_folders = next(os.walk(path_all_images))[1]
+
+    for f in img_folders:
+        f_path = os.path.join(os.path.expanduser('~'), path_all_images, f)
+        files = os.listdir(f_path)
+        for img_name in files:
+            extension = os.path.splitext(img_name)[1]
+            if extension in image_types:
+                im = cv2.imread(os.path.join(os.path.expanduser('~'), f_path, img_name), -1)
+                im_name = f + "_" + img_name
+                cv2.imwrite(os.path.join(os.path.expanduser('~'), path_all_images, im_name), im)
+        shutil.rmtree(f_path)
+
     images_paths = []
-    for f in file_paths:
-        path = os.path.join(os.path.expanduser('~'), dir_zip, f)
-        images_paths.append(path)
+    for f in folder_paths:
+        path_csv = os.path.join(os.path.expanduser('~'), dir_zip, f)
+        images_paths.append(path_csv)
 
     names = []
     labels = []
-    image_types = ['.png', '.jpg', '.jpeg', '.tiff', '.bmp']
 
     for image_path in images_paths:
         filename, file_extension = os.path.splitext(image_path)
         latest_file = Path(image_path).parent.absolute()
         latest_file_name = Path(latest_file).stem
+
         if file_extension in image_types:
-            names.append(Path(image_path).stem)
+            name = latest_file_name + '_' + Path(image_path).stem
+            names.append(name)
             labels.append(latest_file_name)
 
-    df = pd.DataFrame({'id': names, 'label': labels})
+    df_all = pd.DataFrame({'id': names, 'label': labels})
     parent = Path(images_paths[0]).parent.parent.parent
-    path = os.path.join(os.path.expanduser('~'), parent, 'all_data.csv')
-    print("Found %d different class files. If you have more than %d classes you should split your images as different "
-          "files. " % (len(df.label.unique()), len(df.label.unique())))
-    df.to_csv(path, index=False)
-    return df
+    path_csv = os.path.join(os.path.expanduser('~'), parent, 'all_data.csv')
+    print("Found %d different class folders. If you have more than %d classes you should split your images as different"
+          " folders in zip file." % (len(df_all.label.unique()), len(df_all.label.unique())))
+    df_all.to_csv(path_csv, index=False)
+    train_df,test_df = test_train_split(path_csv)
+    return train_df, test_df, path_all_images
+
+
+def test_train_split(df_dir):
+    df = pd.read_csv(df_dir)
+    train_df, test_df = train_test_split(df, test_size=0.1)
+    parent = Path(df_dir).parent
+    train_df_path = os.path.join(os.path.expanduser('~'), parent, 'TRAIN_DF.csv')
+    test_df_path = os.path.join(os.path.expanduser('~'), parent, 'TEST_DF.csv')
+    train_df.to_csv(train_df_path, index=False)
+    test_df.to_csv(test_df_path, index=False)
+    return train_df,test_df
+
+def balance_check(train_df):
+    print("")
+    counts = train_df.label.value_counts()
+    count_dict = counts.to_dict()
+    list_count = list(count_dict.values())
+    if all(x == list_count[0] for x in list_count) == False:
+        print("Data is not balance. Balancing process is started.")
+        return False
+    else:
+        print("Data is balance.")
+        return True
+
