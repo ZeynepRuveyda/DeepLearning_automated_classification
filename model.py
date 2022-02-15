@@ -6,26 +6,25 @@ import inspect
 
 
 class Custom_Model(tf.keras.Model):
-    def _init_(self,image_size,model_name,weights = 'imagenet'):
+    def _init_(self, image_size, model_name, weights='imagenet'):
         super(Custom_Model, self).__init__()
         self.input_shape = image_size + (3,)
         self.weights = weights
         self.model_name = model_name
-        self.model_dictionary = {m[0]:m[1] for m in inspect.getmembers(tf.keras.applications, inspect.isfunction)}
+        self.model_dictionary = {m[0]: m[1] for m in inspect.getmembers(tf.keras.applications, inspect.isfunction)}
         self.model_dictionary.pop('NASNetLarge')
         self.base_model = self.model_dictionary[self.model_name](input_shape=self.input_shape,
-                                               include_top=False,
-                                               weights='imagenet')
+                                                                 include_top=False,
+                                                                 weights='imagenet')
+        self.base_model.trainable = False
 
-
-    def call(self, inputs):
-        inputs = tf.keras.Input(inputs)
-        x = self.base_model(inputs, training=False)
+    def call(self, inputs, training=False):
+        x = self.base_model(inputs)
         x = tf.keras.layers.GlobalAveragePooling2D(x)
         x = tf.keras.layers.Dropout(0.2)(x)
         outputs = tf.keras.layers.Dense(1)(x)
-        model = tf.keras.Model(inputs, outputs)
+        return outputs
 
-        return model
-
-
+    def build_graph(self):
+        x = tf.keras.layers.Input(self.input_shape)
+        return tf.keras.Model(inputs=[x], outputs=self.call(x))
