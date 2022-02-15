@@ -18,13 +18,13 @@ class Custom_Model(tf.keras.Model):
                                                                  weights='imagenet')
         self.base_model.trainable = False
 
-    def call(self, inputs, training=False):
-        x = self.base_model(inputs)
+    def call(self, inputs):
+        x = self.base_model(inputs,training=False)
         x = tf.keras.layers.GlobalAveragePooling2D(x)
         x = tf.keras.layers.Dropout(0.2)(x)
         outputs = tf.keras.layers.Dense(1)(x)
         return outputs
 
     def build_graph(self):
-        x = tf.keras.layers.Input(self.input_shape)
-        return tf.keras.Model(inputs=[x], outputs=self.call(x))
+        x = tf.keras.layers.Input(shape=self.input_shape)
+        return tf.keras.Model(inputs=x, outputs=self.call(x))
