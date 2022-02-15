@@ -19,6 +19,7 @@ class CustomDataGenerator:
         self.target_size = target_size
         self.classes = self.train_df.label.unique().tolist()
 
+
     def data_generator(self):
         with tf.device('/device:GPU:0'):
             train_df, eval_df = train_test_split(self.train_df, test_size=0.2)

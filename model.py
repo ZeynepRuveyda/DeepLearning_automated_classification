@@ -2,14 +2,30 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 import tensorflow as tf
+import inspect
+
 
 class Custom_Model(tf.keras.Model):
-    def __init__(self,input_shape,backbone,weights = 'imagenet'):
-        self.input_shape = input_shape
+    def _init_(self,image_size,model_name,weights = 'imagenet')
+        super(Custom_Model, self).__init__()
+        self.input_shape = image_size + (3,)
         self.weights = weights
-        self.backbone = backbone
+        self.model_name = model_name
+        self.model_dictionary = {m[0]:m[1] for m in inspect.getmembers(tf.keras.applications, inspect.isfunction)}
+        self.model_dictionary.pop('NASNetLarge')
+        self.base_model = self.model_dictionary[self.model_name](input_shape=self.input_shape,
+                                               include_top=False,
+                                               weights='imagenet')
 
 
     def call(self, inputs):
+        inputs = tf.keras.Input(shape=(160, 160, 3))
+        x = self.base_model(x, training=False)
+        x = tf.keras.layers.GlobalAveragePooling2D(x)
+        x = tf.keras.layers.Dropout(0.2)(x)
+        outputs = tf.keras.layers.Dense(1)(x)
+        model = tf.keras.Model(inputs, outputs)
+
+        return model
 
 
