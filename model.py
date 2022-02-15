@@ -6,7 +6,7 @@ import inspect
 
 
 class Custom_Model(tf.keras.Model):
-    def _init_(self,image_size,model_name,weights = 'imagenet')
+    def _init_(self,image_size,model_name,weights = 'imagenet'):
         super(Custom_Model, self).__init__()
         self.input_shape = image_size + (3,)
         self.weights = weights
@@ -19,8 +19,8 @@ class Custom_Model(tf.keras.Model):
 
 
     def call(self, inputs):
-        inputs = tf.keras.Input(shape=(160, 160, 3))
-        x = self.base_model(x, training=False)
+        inputs = tf.keras.Input(inputs)
+        x = self.base_model(inputs, training=False)
         x = tf.keras.layers.GlobalAveragePooling2D(x)
         x = tf.keras.layers.Dropout(0.2)(x)
         outputs = tf.keras.layers.Dense(1)(x)
