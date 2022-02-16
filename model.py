@@ -6,11 +6,11 @@ import inspect
 
 
 class ModelSubClassing(tf.keras.Model):
-    def __init__(self,model_name,IMG_SHAPE):
+    def __init__(self,model_name,input_shape):
         super(ModelSubClassing, self).__init__()
         # define all layers in init
         self.model_name = model_name
-        self.IMG_SHAPE = IMG_SHAPE
+        self.input_shape = input_shape
         self.dense = tf.keras.layers.Dense(1)
 
     def call(self, input_tensor):
@@ -26,6 +26,6 @@ class ModelSubClassing(tf.keras.Model):
         return outputs
 
     def summary(self):
-        x = tf.keras.layers.Input(shape=self.IMG_SHAPE)
+        x = tf.keras.layers.Input(shape=self.input_shape)
         model = tf.keras.Model(inputs=[x], outputs=self.call(x))
         return model.summary()
