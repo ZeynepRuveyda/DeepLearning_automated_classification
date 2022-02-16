@@ -21,8 +21,6 @@ class ModelSubClassing(tf.keras.Model):
         base_model.trainable = False
         print(base_model.summary())
         x = base_model(input_tensor,training=False)
-        x = tf.keras.layers.GlobalAveragePooling2D(x)
-        x = tf.keras.layers.Dropout(0.2)(x)
         outputs = self.dense(x)
         return outputs
 
