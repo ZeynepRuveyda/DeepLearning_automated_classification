@@ -12,7 +12,7 @@ class ModelSubClassing(tf.keras.Model):
         self.model_name = model_name
         self.IMG_SHAPE = IMG_SHAPE
         self.dense = tf.keras.layers.Dense(1)
-
+        self.flat = tf.keras.layers.Flatten(name="flatten")
     def call(self, input_tensor):
 
         model_dictionary = {m[0]: m[1] for m in inspect.getmembers(tf.keras.applications, inspect.isfunction)}
@@ -23,6 +23,7 @@ class ModelSubClassing(tf.keras.Model):
         x = base_model(input_tensor,training=False)
         x = tf.keras.layers.GlobalAveragePooling2D(x)
         x = tf.keras.layers.Dropout(0.2)(x)
+        x = self.flat(x)
         outputs = self.dense(x)
         return outputs
 
