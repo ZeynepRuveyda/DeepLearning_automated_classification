@@ -17,11 +17,9 @@ class ModelSubClassing(tf.keras.Model):
 
         model_dictionary = {m[0]: m[1] for m in inspect.getmembers(tf.keras.applications, inspect.isfunction)}
         model_dictionary.pop('NASNetLarge')
-        pre_model = model_dictionary[self.model_name].preprocess_input
-        base_model = model_dictionary[self.model_name](input_shape=self.input_shape,include_top=False,weights = self.weights)
+        base_model = model_dictionary[self.model_name](input_shape=self.input_shape,include_top=False,weights = 'imagenet' )
         base_model.trainable = False
-        x = pre_model(input_tensor)
-        x = base_model(x,training=False)
+        x = base_model(input_tensor,training=False)
         x = tf.keras.layers.GlobalAveragePooling2D(x)
         x = tf.keras.layers.Dropout(0.2)(x)
         outputs = self.dense(x)
