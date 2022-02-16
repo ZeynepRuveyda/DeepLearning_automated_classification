@@ -10,7 +10,7 @@ class ModelSubClassing(tf.keras.Model):
         super(ModelSubClassing, self).__init__()
         # define all layers in init
         self.model_name = model_name
-        self.self.IMG_SHAPE = IMG_SHAPE
+        self.IMG_SHAPE = IMG_SHAPE
         self.dense = tf.keras.layers.Dense(1)
 
     def call(self, input_tensor):
