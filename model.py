@@ -17,7 +17,7 @@ class ModelSubClassing(tf.keras.Model):
 
         model_dictionary = {m[0]: m[1] for m in inspect.getmembers(tf.keras.applications, inspect.isfunction)}
         model_dictionary.pop('NASNetLarge')
-        base_model = model_dictionary[self.model_name](input_shape=self.self.IMG_SHAPE,include_top=False,weights = 'imagenet' )
+        base_model = model_dictionary[self.model_name](input_shape=self.IMG_SHAPE,include_top=False,weights = 'imagenet' )
         base_model.trainable = False
         print(base_model.summary())
         x = base_model(input_tensor,training=False)
@@ -27,6 +27,6 @@ class ModelSubClassing(tf.keras.Model):
         return outputs
 
     def summary(self):
-        x = tf.keras.layers.Input(shape=self.self.IMG_SHAPE)
+        x = tf.keras.layers.Input(shape=self.IMG_SHAPE)
         model = tf.keras.Model(inputs=[x], outputs=self.call(x))
         return model.summary()
