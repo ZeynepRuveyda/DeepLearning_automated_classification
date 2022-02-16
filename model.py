@@ -19,7 +19,6 @@ class ModelSubClassing(tf.keras.Model):
         model_dictionary.pop('NASNetLarge')
         base_model = model_dictionary[self.model_name](input_shape=self.IMG_SHAPE,include_top=False,weights = 'imagenet' )
         base_model.trainable = False
-        print(base_model.summary())
         x = base_model(input_tensor,training=False)
         outputs = self.dense(x)
         return outputs
