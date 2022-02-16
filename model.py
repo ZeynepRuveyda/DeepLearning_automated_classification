@@ -13,17 +13,16 @@ class ModelSubClassing(tf.keras.Model):
         self.IMG_SHAPE = IMG_SHAPE
         self.dense = tf.keras.layers.Dense(1)
 
-    def call(self, input_tensor, training=False):
+    def call(self, input_tensor):
         model_dictionary = {m[0]: m[1] for m in inspect.getmembers(tf.keras.applications, inspect.isfunction)}
         model_dictionary.pop('NASNetLarge')
         base_model = model_dictionary[self.model_name](input_shape=self.input_shape,include_top=False,weights = self.weights)
         base_model.trainable = False
-        x = base_model(input_tensor,training=training)
+        x = base_model(input_tensor,training=False)
         x = tf.keras.layers.GlobalAveragePooling2D(x)
         x = tf.keras.layers.Dropout(0.2)(x)
         outputs = self.dense(x)
         return outputs
-
 
     def build_graph(self):
         x = tf.keras.layers.Input(shape=self.IMG_SHAPE)
