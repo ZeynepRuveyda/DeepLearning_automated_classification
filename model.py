@@ -17,11 +17,14 @@ class Custom_Model(tf.keras.Model):
         self.base_model = self.model_dictionary[self.model_name](input_shape=self.IMG_SHAPE, include_top=False,
                                                                  weights='imagenet')
         self.base_model.trainable = False
-        self.dropout = tf.keras.layers.Dropout(0.5)
+        self.global_average_layer = tf.keras.layers.GlobalAveragePooling2D()
+        self.dropout = tf.keras.layers.Dropout(0.2)
 
     def call(self, input_tensor,training=False):
         x = self.base_model(input_tensor)
+        x = self.global_average_layer(x)
         if training:
             x = self.dropout(x, training= training)
-        return x
-
+            outputs = self.dense(x)
+        model = tf.keras.Model(input_tensor, outputs)
+        return model
