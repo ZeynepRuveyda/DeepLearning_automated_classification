@@ -5,7 +5,7 @@ import tensorflow as tf
 import inspect
 
 
-class Custom_Model(tf.keras.Model):
+class Custom_Model():
     def __init__(self, model_name,IMG_SHAPE):
         super(Custom_Model, self).__init__()
         # define all layers in init
