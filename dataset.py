@@ -8,7 +8,7 @@ from tensorflow.keras.utils import Sequence
 from imblearn.over_sampling import RandomOverSampler
 from imblearn.tensorflow import balanced_batch_generator
 from sklearn.model_selection import train_test_split
-from keras.applications.resne50 import preprocess_input
+from keras.applications.resnet50 import preprocess_input
 
 class CustomDataGenerator:
 
