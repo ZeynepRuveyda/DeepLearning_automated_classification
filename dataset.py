@@ -60,18 +60,9 @@ class CustomDataGenerator:
                 seed=42,
                 class_mode="categorical"
             )
-        train_generator = train_datagen.flow_from_dataframe(
-            dataframe=train_df,
-            directory=self.images_folder,
-            x_col="id",
-            y_col="label",
-            target_size=(self.target_size, self.target_size),
-            batch_size=self.batch_size,
-            shuffle=True,
-            seed=42,
-            class_mode="categorical"
-        )
-        class_weights = find_class_weights(train_generator)
+        counts = train_df.label.value_counts()
+        count_dict = counts.to_dict()
+        class_weights = create_class_weight(count_dict)
 
         if balance_check(self.train_df):
 
@@ -90,8 +81,7 @@ class CustomDataGenerator:
                 )
                 return train_generator, val_generator, test_generator,self.classes
         else:
-            counts = train_df.label.value_counts()
-            count_dict = counts.to_dict()
+
 
             print("Class distribution : %s ,Balancing process is started." % (count_dict))
             train_df = random_over_sampling(train_df,self.images_folder)

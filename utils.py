@@ -8,7 +8,7 @@ import cv2
 from sklearn.model_selection import train_test_split
 import time
 import random
-from sklearn.utils import class_weight
+import math
 import numpy as np
 # Creating csv files for all image with their classes. Classes will be added as folder name of image .
 # Getting all images into a one folder
@@ -112,13 +112,17 @@ def random_over_sampling(train_df,all_image_path):
     new_train_df = pd.DataFrame({'id': new_names, 'label': new_labels})
 
     return new_train_df
-def find_class_weights(train_generator):
 
-    class_weights = class_weight.compute_class_weight('balanced',np.unique(train_generator.classes),y=train_generator.classes)
-    class_weights = dict(zip(np.unique(train_generator.classes), class_weights))
-    return class_weights
+def create_class_weight(labels_dict, mu=0.15):
+    total = np.sum(list(labels_dict.values()))
+    keys = labels_dict.keys()
+    class_weight = dict()
 
+    for key in keys:
+        score = math.log(mu * total / float(labels_dict[key]))
+        class_weight[key] = score if score > 1.0 else 1.0
 
+    return class_weight
 
 
 
