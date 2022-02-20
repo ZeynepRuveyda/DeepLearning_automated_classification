@@ -101,19 +101,28 @@ def random_over_sampling(train_df,all_image_path):
         label_ind = list(index[train_df["label"] == key])
         if len(label_ind) < dif:
             inds = random.choices(label_ind,k=dif)
+            j = 0
+            for i in inds:
+                sample = train_df.iloc[i]
+                names.append(str(j)+'_copy_' + sample['id'])
+                labels.append((sample['label']))
+                im = cv2.imread(os.path.join(os.path.expanduser('~'), all_image_path, sample['id']), -1)
+                cv2.imwrite(os.path.join(os.path.expanduser('~'), all_image_path, 'copy_' + sample['id']), im)
+                j = j+1
         else:
             inds = random.sample(label_ind, dif)
 
-        for i in inds:
-            sample = train_df.iloc[i]
-            names.append('copy_' + sample['id'])
-            labels.append((sample['label']))
-            im = cv2.imread(os.path.join(os.path.expanduser('~'), all_image_path, sample['id']), -1)
-            cv2.imwrite(os.path.join(os.path.expanduser('~'), all_image_path, 'copy_' + sample['id']), im)
+            for i in inds:
+                sample = train_df.iloc[i]
+                names.append('copy_' + sample['id'])
+                labels.append((sample['label']))
+                im = cv2.imread(os.path.join(os.path.expanduser('~'), all_image_path, sample['id']), -1)
+                cv2.imwrite(os.path.join(os.path.expanduser('~'), all_image_path, 'copy_' + sample['id']), im)
 
     new_names = [x + y for x, y in zip(list(train_df.id), names)]
     new_labels = [x + y for x, y in zip(list(train_df.label), labels)]
     new_train_df = pd.DataFrame({'id': new_names, 'label': new_labels})
+    print()
 
     return new_train_df
 
