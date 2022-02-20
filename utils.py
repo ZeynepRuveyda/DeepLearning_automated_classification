@@ -114,11 +114,8 @@ def random_over_sampling(train_df,all_image_path):
     return new_train_df
 def find_class_weights(train_generator):
 
-    class_weights  = class_weight.compute_class_weight(
-               'balanced',
-                np.unique(train_generator.classes),
-                train_generator.classes)
-
+    class_weights = class_weight.compute_class_weight('balanced',np.unique(train_generator.classes),y=train_generator.classes)
+    class_weights = dict(zip(np.unique(train_generator.classes), class_weights))
     return class_weights
 
 
