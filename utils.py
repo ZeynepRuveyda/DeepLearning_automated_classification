@@ -31,8 +31,8 @@ def create_dataset(dir_zip):
         for img_name in files:
             extension = os.path.splitext(img_name)[1]
             if extension in image_types:
-                img_name = img_name.replace(".png",".jpg")
                 im = cv2.imread(os.path.join(os.path.expanduser('~'), f_path, img_name), -1)
+                img_name = img_name.replace(".png", ".jpg")
                 im_name = f + "_" + img_name
                 cv2.imwrite(os.path.join(os.path.expanduser('~'), path_all_images, im_name), im)
         shutil.rmtree(f_path)
