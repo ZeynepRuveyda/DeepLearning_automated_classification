@@ -18,8 +18,7 @@ class CustomDataGenerator:
         self.train_df = train_df
         self.batch_size = batch_size
         self.target_size = target_size
-        self.classes = self.train_df.label.unique().tolist()
-
+        self.classes = len(self.train_df.label.unique().tolist())
 
     def data_generator(self):
         with tf.device('/device:GPU:0'):
