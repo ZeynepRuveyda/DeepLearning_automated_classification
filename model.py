@@ -6,9 +6,10 @@ import inspect
 
 
 class Custom_Model(tf.keras.Model):
-    def __init__(self, model_name):
+    def __init__(self, model_name,IMG_SHAPE):
         super(Custom_Model, self).__init__()
         # define all layers in init
+        self.IMG_SHAPE = IMG_SHAPE
         self.model_name = model_name
         self.dense = tf.keras.layers.Dense(1, activation=tf.nn.softmax)
         self.flat = tf.keras.layers.Flatten(name="flatten")
