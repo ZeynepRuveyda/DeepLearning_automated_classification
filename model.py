@@ -5,21 +5,22 @@ import tensorflow as tf
 import inspect
 
 
-class ModelSubClassing(tf.keras.Model):
-    def __init__(self,model_name,IMG_SHAPE):
-        super(ModelSubClassing, self).__init__()
+class Custom_Model(tf.keras.Model):
+    def __init__(self, model_name, IMG_SHAPE):
+        super(Custom_Model, self).__init__()
         # define all layers in init
         self.model_name = model_name
         self.IMG_SHAPE = IMG_SHAPE
         self.dense = tf.keras.layers.Dense(1)
         self.flat = tf.keras.layers.Flatten(name="flatten")
-    def call(self, input_tensor):
+        self.model_dictionary = {m[0]: m[1] for m in inspect.getmembers(tf.keras.applications, inspect.isfunction)}
+        self.model_dictionary.pop('NASNetLarge')
+        self.base_model = self.model_dictionary[self.model_name](input_shape=self.IMG_SHAPE, include_top=False,
+                                                                 weights='imagenet')
+        self.base_model.trainable = False
 
-        model_dictionary = {m[0]: m[1] for m in inspect.getmembers(tf.keras.applications, inspect.isfunction)}
-        model_dictionary.pop('NASNetLarge')
-        base_model = model_dictionary[self.model_name](input_shape=self.IMG_SHAPE,include_top=False,weights = 'imagenet' )
-        base_model.trainable = False
-        x = base_model(input_tensor,training=False)
+    def call(self, input_tensor):
+        x = self.base_model(input_tensor, training=False)
         outputs = self.dense(x)
         return outputs
 
