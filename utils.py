@@ -92,7 +92,7 @@ def random_over_sampling(train_df,all_image_path):
     counts = train_df.label.value_counts()
     count_dict = counts.to_dict()
     max_class = max(count_dict.values())
-    max_key = max(train_df, key=train_df.get)
+    max_key = max(count_dict, key=count_dict.get)
     count_dict.pop(max_key)
     names = []
     labels = []
