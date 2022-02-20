@@ -21,11 +21,10 @@ class Custom_Model(tf.keras.Model):
         self.global_average_layer = tf.keras.layers.GlobalAveragePooling2D()
         self.dropout = tf.keras.layers.Dropout(0.2)
 
-    def call(self, input_tensor,training=False):
-        x = self.base_model(input_tensor)
+    def call(self, input_tensor):
+        x = self.base_model(input_tensor,training=False)
         x = self.global_average_layer(x)
-        if training:
-            x = self.dropout(x, training= training)
-            outputs = self.dense(x)
+        x = self.dropout(x)
+        outputs = self.dense(x)
         model = tf.keras.Model(input_tensor, outputs)
         return model
