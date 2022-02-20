@@ -24,7 +24,6 @@ class Custom_Model():
         input = tf.keras.Input(shape=self.IMG_SHAPE)
         x = self.base_model(input,training=False)
         x = self.global_average_layer(x)
-        x = self.dropout(x)
         outputs = self.dense(x)
         model = tf.keras.Model(input,outputs)
         return model
