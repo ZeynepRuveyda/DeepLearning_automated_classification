@@ -26,5 +26,5 @@ class Custom_Model(tf.keras.Model):
         x = self.global_average_layer(x)
         x = self.dropout(x)
         outputs = self.dense(x)
-        model = tf.keras.Model(input_tensor, outputs)
+        model = tf.keras.Model(self.base_model.input, outputs)
         return model
