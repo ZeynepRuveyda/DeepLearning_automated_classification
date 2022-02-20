@@ -98,10 +98,11 @@ def random_over_sampling(train_df,all_image_path):
     labels = []
     for key,value in count_dict.items():
         dif = max_class - value
-        print(dif)
         label_ind = list(index[train_df["label"] == key])
-        print(label_ind)
-        inds = random.sample(label_ind, dif)
+        try:
+            inds = random.sample(label_ind, dif)
+        except ValueError:
+            pass
         for i in inds:
             sample = train_df.iloc(i)
             names.append('copy_' + sample['id'])
