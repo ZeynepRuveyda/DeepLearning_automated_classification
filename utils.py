@@ -100,7 +100,7 @@ def random_over_sampling(train_df,all_image_path):
         dif = max_class - value
         label_ind = list(index[train_df["label"] == key])
         if len(label_ind) < dif:
-            inds = random.choice(label_ind,k=dif)
+            inds = random.choices(label_ind,k=dif)
         else:
             inds = random.sample(label_ind, dif)
 
