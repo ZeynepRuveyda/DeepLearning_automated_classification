@@ -5,7 +5,7 @@ import tensorflow as tf
 import inspect
 
 
-class Custom_Model():
+class Custom_Model(tf.keras.Model):
     def __init__(self, model_name,IMG_SHAPE):
         super(Custom_Model, self).__init__()
         # define all layers in init
@@ -21,7 +21,7 @@ class Custom_Model():
         self.global_average_layer = tf.keras.layers.GlobalAveragePooling2D()
         self.dropout = tf.keras.layers.Dropout(0.2)
 
-    def call(self):
+    def call(self,input_tensor):
         input = tf.keras.Input(shape=self.IMG_SHAPE)
         x = self.base_model(input,training=False)
         x = self.global_average_layer(x)
