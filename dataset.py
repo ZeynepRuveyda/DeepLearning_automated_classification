@@ -8,7 +8,7 @@ from tensorflow.keras.utils import Sequence
 from imblearn.over_sampling import RandomOverSampler
 from imblearn.tensorflow import balanced_batch_generator
 from sklearn.model_selection import train_test_split
-from keras.applications.vgg16 import VGG16, preprocess_input
+
 
 class CustomDataGenerator:
 
@@ -25,16 +25,18 @@ class CustomDataGenerator:
         with tf.device('/device:GPU:0'):
             train_df, eval_df = train_test_split(self.train_df, test_size=0.2)
             train_datagen = ImageDataGenerator(
+                rescale=1. / 255,
                 rotation_range=40,
                 width_shift_range=0.2,
                 height_shift_range=0.2,
                 shear_range=0.2,
                 zoom_range=0.2,
                 horizontal_flip=True,
-                fill_mode='nearest',
-                preprocessing_function=preprocess_input
+                fill_mode='nearest'
             )
-            val_datagen = ImageDataGenerator(preprocessing_function = preprocess_input)
+            val_datagen = ImageDataGenerator(
+                rescale=1. / 255
+            )
             print("Test Dataset : ")
             test_generator = val_datagen.flow_from_dataframe(
                 dataframe= self.test_df,
@@ -75,7 +77,7 @@ class CustomDataGenerator:
                     seed=42,
                     class_mode="categorical"
                 )
-                return train_generator, val_generator, test_generator
+                return train_generator, val_generator, test_generator,self.classes
         else:
             counts = train_df.label.value_counts()
             count_dict = counts.to_dict()
@@ -86,7 +88,7 @@ class CustomDataGenerator:
                                                             self.target_size,
                                                             self.batch_size, "categorical")
                     print("Training data has made balance.")
-                    return train_generator, val_generator, test_generator
+                    return train_generator, val_generator, test_generator,self.classes
 
 
 class BalancedDataGenerator(Sequence):
