@@ -84,11 +84,11 @@ class CustomDataGenerator:
 
 
             print("Class distribution : %s ,Balancing process is started." % (count_dict))
-            train_df = random_over_sampling(train_df,self.images_folder)
+            train_df_new = random_over_sampling(train_df,self.images_folder)
             with tf.device('/device:GPU:0'):
                 print("Training Dataset : ")
                 train_generator = train_datagen.flow_from_dataframe(
-                    dataframe=train_df,
+                    dataframe=train_df_new,
                     directory=self.images_folder,
                     x_col="id",
                     y_col="label",
