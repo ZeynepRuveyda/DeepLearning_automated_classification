@@ -11,7 +11,7 @@ class Custom_Model():
         # define all layers in init
         self.IMG_SHAPE = im_size + (3,)
         self.model_name = model_name
-        self.dense = tf.keras.layers.Dense(1, activation=tf.nn.softmax)
+        self.dense = tf.keras.layers.Dense(1, activation='sigmoid')
         self.flat = tf.keras.layers.Flatten(name="flatten")
         self.model_dictionary = {m[0]: m[1] for m in inspect.getmembers(tf.keras.applications, inspect.isfunction)}
         self.base_model = self.model_dictionary[self.model_name](input_shape=self.IMG_SHAPE, include_top=False,
