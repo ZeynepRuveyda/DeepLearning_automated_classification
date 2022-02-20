@@ -60,6 +60,18 @@ class CustomDataGenerator:
                 seed=42,
                 class_mode="categorical"
             )
+        train_generator = train_datagen.flow_from_dataframe(
+            dataframe=train_df,
+            directory=self.images_folder,
+            x_col="id",
+            y_col="label",
+            target_size=(self.target_size, self.target_size),
+            batch_size=self.batch_size,
+            shuffle=True,
+            seed=42,
+            class_mode="categorical"
+        )
+        class_weights = find_class_weights(train_generator)
 
         if balance_check(self.train_df):
 
@@ -80,55 +92,29 @@ class CustomDataGenerator:
         else:
             counts = train_df.label.value_counts()
             count_dict = counts.to_dict()
+
             print("Class distribution : %s ,Balancing process is started." % (count_dict))
+            train_df = random_over_sampling(train_df,self.images_folder)
             with tf.device('/device:GPU:0'):
-                with tf.device('/device:GPU:0'):
-                    train_generator = BalancedDataGenerator(self.images_folder, train_df, train_datagen,
-                                                            self.target_size,
-                                                            self.batch_size, "categorical")
-                    print("Training data has made balance.")
-                    return train_generator, val_generator, test_generator,self.classes
+                print("Training Dataset : ")
+                train_generator = train_datagen.flow_from_dataframe(
+                    dataframe=train_df,
+                    directory=self.images_folder,
+                    x_col="id",
+                    y_col="label",
+                    target_size=(self.target_size, self.target_size),
+                    batch_size=self.batch_size,
+                    shuffle=True,
+                    seed=42,
+                    class_mode="categorical"
+                )
+                counts = train_df.label.value_counts()
+                count_dict = counts.to_dict()
+
+                print("Class distribution : %s ,Data made balance." % (count_dict))
+                return train_generator, val_generator, test_generator, self.classes,class_weights
 
 
-class BalancedDataGenerator(Sequence):
 
-    def __init__(self, data_path, dataframe, datagen, target_size, batch_size, class_mode='categorical'):
-        self.data_path = data_path
-        self.dataframe = dataframe
-        self.datagen = datagen
-        self.target_size = target_size
-        self.class_mode = class_mode
-        self.batch_size = batch_size
-        X = self.dataframe.id
-        y = self.dataframe.label
-        X = np.array(X)
-        y = np.array(y)
-
-        self.batch_size = min(self.batch_size, X.shape[0])
-        self.gen, self.steps_per_epoch = balanced_batch_generator(X.reshape(X.shape[0], -1), y,
-                                                                  sampler=RandomOverSampler(),
-                                                                  batch_size=self.batch_size, keep_sparse=True)
-        self._shape = (self.steps_per_epoch * self.batch_size, *X.shape[1:])
-
-    def __len__(self):
-        return self.steps_per_epoch
-
-    def __getitem__(self, idx):
-        x_batch, y_batch = self.gen.__next__()
-        x_batch = x_batch.reshape(-1)
-        df = pd.DataFrame()
-        df['id'] = x_batch
-        df['label'] = y_batch
-        print("Training Dataset : ")
-        return self.datagen.flow_from_dataframe(dataframe=df,
-                                                directory=self.data_path,
-                                                x_col='id',
-                                                y_col='label',
-                                                subset="training",
-                                                shuffle=True,
-                                                seed=42,
-                                                target_size=(self.target_size, self.target_size),
-                                                class_mode=self.class_mode,
-                                                batch_size=self.batch_size).next()
 
 
