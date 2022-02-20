@@ -3,7 +3,7 @@ import numpy as np
 import os
 import tensorflow as tf
 import inspect
-from keras.application import *
+
 
 class Custom_Model():
     def __init__(self, model_name,im_size):
