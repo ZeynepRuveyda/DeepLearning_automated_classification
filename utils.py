@@ -117,7 +117,7 @@ def random_over_sampling(train_df,all_image_path):
                 names.append('copy_' + sample['id'])
                 labels.append((sample['label']))
                 im = cv2.imread(os.path.join(os.path.expanduser('~'), all_image_path, sample['id']), -1)
-                cv2.imwrite(os.path.join(os.path.expanduser('~'), all_image_path, 'copy_' + sample['id']), im)
+                cv2.imwrite(os.path.join(os.path.expanduser('~'), all_image_path, 'copy_' + sample['id']+'.jpg'), im)
 
     new_names = [x + y for x, y in zip(list(train_df.id), names)]
     new_labels = [x + y for x, y in zip(list(train_df.label), labels)]
