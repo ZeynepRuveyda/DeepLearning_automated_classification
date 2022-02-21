@@ -18,7 +18,7 @@ from model import *
 # Creating csv files for all image with their classes. Classes will be added as folder name of image .
 # Getting all images into a one folder
 # Return two data csv and all images data path.
-
+from tqdm import tqdm
 def create_dataset(dir_zip):
     image_types = ['.png', '.jpg', '.jpeg', '.tiff', '.bmp']
     with ZipFile(dir_zip, 'r') as zipObj:
