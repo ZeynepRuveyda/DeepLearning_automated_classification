@@ -51,7 +51,7 @@ def create_dataset(dir_zip):
         latest_file_name = Path(latest_file).stem
 
         if file_extension in image_types:
-            name = latest_file_name + '_' + Path(image_path).stem + 'jpg'
+            name = latest_file_name + '_' + Path(image_path).stem +'jpg'
             names.append(name)
             labels.append(latest_file_name)
 
