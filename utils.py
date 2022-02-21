@@ -165,7 +165,6 @@ def model_selection(train_generator,validation_generator,im_size,nm_classes):
         model_benchmarks['model_name'].append(model_name)
         model_benchmarks['validation_accuracy'].append(history.history['val_accuracy'][-1])
         benchmark_df = pd.DataFrame(model_benchmarks)
-        benchmark_df.sort_values('num_model_params', inplace=True)  # sort in ascending order of num_model_params column
         benchmark_df.to_csv('benchmark_df.csv', index=False)  # write results to csv file
 
         return benchmark_df
