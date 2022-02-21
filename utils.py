@@ -172,7 +172,8 @@ def model_selection(train_generator,validation_generator,im_size,nm_classes):
         benchmark_df = pd.DataFrame(model_benchmarks)
         benchmark_df.to_csv('benchmark_df.csv', index=False)  # write results to csv file
 
-        return benchmark_df
+    return benchmark_df
+
 def benchmark_visualization(benchmark_df):
     # Loop over each row and plot the num_model_params vs validation_accuracy
     markers = [".", ",", "o", "v", "^", "<", ">", "1", "2", "3", "4", "8", "s", "p", "P", "*", "h", "H", "+", "x", "X",
