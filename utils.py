@@ -20,7 +20,8 @@ from model import *
 # Getting all images into a one folder
 # Return two data csv and all images data path.
 from tqdm import tqdm
-from sklearn.metrics import confusion_matrix
+from sklearn.metrics import confusion_matrix, classification_report
+
 def create_dataset(dir_zip):
     image_types = ['.png', '.jpg', '.jpeg', '.tiff', '.bmp']
     with ZipFile(dir_zip, 'r') as zipObj:
@@ -227,5 +228,8 @@ def plot_cm(labels, predictions, p=0.5):
   print('Fraudulent Transactions Missed (False Negatives): ', cm[1][0])
   print('Fraudulent Transactions Detected (True Positives): ', cm[1][1])
   print('Total Fraudulent Transactions: ', np.sum(cm[1]))
+
+  print("_______________________________________________________________________")
+  print(classification_report(labels, predictions))
 
   return plt.show
