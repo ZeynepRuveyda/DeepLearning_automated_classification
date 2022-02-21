@@ -150,7 +150,7 @@ def create_class_weight(labels_dict, n_classes):
 
 def model_selection(train_generator,validation_generator,im_size,nm_classes):
     model_dictionary = {m[0]: m[1] for m in inspect.getmembers(tf.keras.applications, inspect.isfunction)}
-    model_benchmarks = {'model_name': [],  'validation_accuracy': []}
+    model_benchmarks = {'model_name': [], 'num_model_params': [] ,'validation_accuracy': []}
     for model_name, model in tqdm(model_dictionary.items()):
 
         model_ = Custom_Model(model_name,im_size,nm_classes)
@@ -163,6 +163,7 @@ def model_selection(train_generator,validation_generator,im_size,nm_classes):
         history = model_.fit(train_generator, epochs=3, validation_data=validation_generator,)
 
         model_benchmarks['model_name'].append(model_name)
+        model_benchmarks['num_model_params'].append(model_.count_params())
         model_benchmarks['validation_accuracy'].append(history.history['val_accuracy'][-1])
         benchmark_df = pd.DataFrame(model_benchmarks)
         benchmark_df.to_csv('benchmark_df.csv', index=False)  # write results to csv file
