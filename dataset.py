@@ -41,7 +41,7 @@ class CustomDataGenerator:
                 dataframe= self.test_df,
                 directory=self.images_folder,
                 x_col="id",
-                y_col=None,
+                y_col="label",
                 target_size=(self.target_size, self.target_size),
                 batch_size=self.batch_size,
                 shuffle=False,
