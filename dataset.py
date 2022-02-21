@@ -12,16 +12,16 @@ from sklearn.model_selection import train_test_split
 
 class CustomDataGenerator:
 
-    def __init__(self, images_folder_dir, test_df, train_df, batch_size, target_size):
+    def __init__(self, images_folder_dir, test_df, train_df, eval_df, batch_size, target_size):
         self.images_folder_dir = images_folder_dir
         self.test_df = test_df
         self.train_df = train_df
+        self.eval_df = eval_df
         self.batch_size = batch_size
         self.target_size = target_size
 
     def data_generator(self):
         with tf.device('/device:GPU:0'):
-            train_df, eval_df = train_test_split(self.train_df, test_size=0.2)
             train_datagen = ImageDataGenerator(
                 rescale=1. / 255,
                 rotation_range=40,
@@ -49,7 +49,7 @@ class CustomDataGenerator:
             print("Validation Dataset : ")
             val_generator = val_datagen.flow_from_dataframe(
 
-                dataframe=eval_df,
+                dataframe=self.eval_df,
                 directory=self.images_folder_dir,
                 x_col="id",
                 y_col="label",
@@ -61,7 +61,7 @@ class CustomDataGenerator:
             )
             print("Training Dataset : ")
             train_generator = train_datagen.flow_from_dataframe(
-                dataframe=train_df,
+                dataframe=self.train_df,
                 directory=self.images_folder_dir,
                 x_col="id",
                 y_col="label",
