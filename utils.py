@@ -153,6 +153,7 @@ def model_selection(train_generator,validation_generator,im_size,nm_classes):
 
         model_ = Custom_Model(model_name,im_size,nm_classes)
         # custom modifications on top of pre-trained model
+        model_ = model.forward()
         history = model_.fit(train_generator, epochs=3, validation_data=validation_generator,)
 
         model_benchmarks['model_name'].append(model_name)
@@ -175,5 +176,33 @@ def benchmark_visualization(benchmark_df):
     plt.ylabel('Validation Accuracy after 3 Epochs')
     plt.title('Accuracy vs Model Size')
     plt.legend(bbox_to_anchor=(1, 1), loc='upper left');  # Move legend out of the plot
+
+    return plt.show()
+
+
+def metrics_visualization(history):
+    acc = history.history['accuracy']
+    val_acc = history.history['val_accuracy']
+
+    loss = history.history['loss']
+    val_loss = history.history['val_loss']
+
+    plt.figure(figsize=(8, 8))
+    plt.subplot(2, 1, 1)
+    plt.plot(acc, label='Training Accuracy')
+    plt.plot(val_acc, label='Validation Accuracy')
+    plt.legend(loc='lower right')
+    plt.ylabel('Accuracy')
+    plt.ylim([min(plt.ylim()), 1])
+    plt.title('Training and Validation Accuracy')
+
+    plt.subplot(2, 1, 2)
+    plt.plot(loss, label='Training Loss')
+    plt.plot(val_loss, label='Validation Loss')
+    plt.legend(loc='upper right')
+    plt.ylabel('Cross Entropy')
+    plt.ylim([0, 1.0])
+    plt.title('Training and Validation Loss')
+    plt.xlabel('epoch')
 
     return plt.show()
