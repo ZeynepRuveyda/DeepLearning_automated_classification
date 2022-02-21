@@ -127,15 +127,15 @@ def random_over_sampling(train_df,all_image_path):
 
     return new_train_df
 
-def create_class_weight(labels_dict, mu=0.15):
+def create_class_weight(labels_dict,n_classes):
     total = np.sum(list(labels_dict.values()))
     keys = labels_dict.keys()
     class_weight = dict()
-
+    x = 0
     for key in keys:
-        score = math.log(mu * total / float(labels_dict[key]))
-        class_weight[key] = score if score > 1.0 else 1.0
-
+        score = total / (n_classes * np.bincount(labels_dict[key]))
+        class_weight[x] = score
+        x+=1
     return class_weight
 
 

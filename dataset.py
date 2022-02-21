@@ -62,7 +62,7 @@ class CustomDataGenerator:
             )
         counts = train_df.label.value_counts()
         count_dict = counts.to_dict()
-        class_weights = create_class_weight(count_dict)
+        class_weights = create_class_weight(count_dict,self.classes)
 
         if balance_check(self.train_df):
 
@@ -98,7 +98,7 @@ class CustomDataGenerator:
                     seed=42,
                     class_mode="categorical"
                 )
-                counts = train_df.label.value_counts()
+                counts = train_df_new.label.value_counts()
                 count_dict = counts.to_dict()
 
                 print("Class distribution : %s ,Data made balance." % (count_dict))
