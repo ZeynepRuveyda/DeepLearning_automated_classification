@@ -31,7 +31,7 @@ def create_dataset(dir_zip):
         for img_name in files:
             extension = os.path.splitext(img_name)[1]
             if extension in image_types:
-                im = cv2.imread(os.path.join(os.path.expanduser('~'), f_path, img_name))
+                im = cv2.imread(os.path.join(os.path.expanduser('~'), f_path, img_name),-1)
                 img_name = img_name.replace(".png", ".jpg")
                 im_name = f + "_" + img_name
                 cv2.imwrite(os.path.join(os.path.expanduser('~'), path_all_images, im_name), im)
@@ -51,7 +51,7 @@ def create_dataset(dir_zip):
         latest_file_name = Path(latest_file).stem
 
         if file_extension in image_types:
-            name = latest_file_name + '_' + Path(image_path).stem + file_extension
+            name = latest_file_name + '_' + Path(image_path).stem + 'jpg'
             names.append(name)
             labels.append(latest_file_name)
 
