@@ -10,7 +10,8 @@ import time
 import random
 import math
 import numpy as np
-
+import tqdm
+import tensorflow as tf
 
 # Creating csv files for all image with their classes. Classes will be added as folder name of image .
 # Getting all images into a one folder
@@ -138,8 +139,7 @@ def create_class_weight(labels_dict, n_classes):
     x = 0
     for key in keys:
         y = labels_dict[key]
-        y = y.astype(np.int)
-        score = total / (n_classes * np.bincount(y))
+        score = (total / n_classes) * (1/y)
         class_weight[x] = score
         x += 1
     return class_weight
