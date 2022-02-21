@@ -10,9 +10,11 @@ import time
 import random
 import math
 import numpy as np
+import matplotlib.pyplot as plt
 import tqdm
 import tensorflow as tf
-
+import inspect
+from model import *
 # Creating csv files for all image with their classes. Classes will be added as folder name of image .
 # Getting all images into a one folder
 # Return two data csv and all images data path.
@@ -144,3 +146,34 @@ def create_class_weight(labels_dict, n_classes):
         x += 1
     return class_weight
 
+def model_selection(train_generator,validation_generator,im_size,nm_classes):
+    model_dictionary = {m[0]: m[1] for m in inspect.getmembers(tf.keras.applications, inspect.isfunction)}
+    model_benchmarks = {'model_name': [],  'validation_accuracy': []}
+    for model_name, model in tqdm(model_dictionary.items()):
+
+        model_ = Custom_Model(model_name,im_size,nm_classes)
+        # custom modifications on top of pre-trained model
+        history = model_.fit(train_generator, epochs=3, validation_data=validation_generator,)
+
+        model_benchmarks['model_name'].append(model_name)
+        model_benchmarks['validation_accuracy'].append(history.history['val_accuracy'][-1])
+        benchmark_df = pd.DataFrame(model_benchmarks)
+        benchmark_df.sort_values('num_model_params', inplace=True)  # sort in ascending order of num_model_params column
+        benchmark_df.to_csv('benchmark_df.csv', index=False)  # write results to csv file
+
+        return benchmark_df
+def benchmark_visualization(benchmark_df):
+    # Loop over each row and plot the num_model_params vs validation_accuracy
+    markers = [".", ",", "o", "v", "^", "<", ">", "1", "2", "3", "4", "8", "s", "p", "P", "*", "h", "H", "+", "x", "X",
+               "D", "d", "|", "_", 4, 5, 6, 7, 8, 9, 10, 11]
+    plt.figure(figsize=(7, 5))
+    for row in benchmark_df.itertuples():
+        plt.scatter(row.num_model_params, row.validation_accuracy, label=row.model_name, marker=markers[row.Index],
+                    s=150, linewidths=2)
+    plt.xscale('log')
+    plt.xlabel('Number of Parameters in Model')
+    plt.ylabel('Validation Accuracy after 3 Epochs')
+    plt.title('Accuracy vs Model Size')
+    plt.legend(bbox_to_anchor=(1, 1), loc='upper left');  # Move legend out of the plot
+
+    return plt.show()
