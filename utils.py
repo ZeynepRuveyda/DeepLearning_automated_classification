@@ -10,6 +10,8 @@ import time
 import random
 import math
 import numpy as np
+
+
 # Creating csv files for all image with their classes. Classes will be added as folder name of image .
 # Getting all images into a one folder
 # Return two data csv and all images data path.
@@ -31,7 +33,7 @@ def create_dataset(dir_zip):
         for img_name in files:
             extension = os.path.splitext(img_name)[1]
             if extension in image_types:
-                im = cv2.imread(os.path.join(os.path.expanduser('~'), f_path, img_name),-1)
+                im = cv2.imread(os.path.join(os.path.expanduser('~'), f_path, img_name), -1)
                 img_name = img_name.replace(".png", ".jpg")
                 im_name = f + "_" + img_name
                 cv2.imwrite(os.path.join(os.path.expanduser('~'), path_all_images, im_name), im)
@@ -61,7 +63,7 @@ def create_dataset(dir_zip):
     print("Found %d different class folders. If you have more than %d classes you should split your images as different"
           " folders in zip file." % (len(df_all.label.unique()), len(df_all.label.unique())))
     df_all.to_csv(path_csv, index=False)
-    train_df,test_df = test_train_split(path_csv)
+    train_df, test_df = test_train_split(path_csv)
     return train_df, test_df, path_all_images
 
 
@@ -73,7 +75,8 @@ def test_train_split(df_dir):
     test_df_path = os.path.join(os.path.expanduser('~'), parent, 'TEST_DF.csv')
     train_df.to_csv(train_df_path, index=False)
     test_df.to_csv(test_df_path, index=False)
-    return train_df,test_df
+    return train_df, test_df
+
 
 def balance_check(train_df):
     counts = train_df.label.value_counts()
@@ -87,7 +90,8 @@ def balance_check(train_df):
         print("Training data is balance.")
         return True
 
-def random_over_sampling(train_df,all_image_path):
+
+def random_over_sampling(train_df, all_image_path):
     train_df.reset_index(drop=True, inplace=True)
     index = train_df.index
     counts = train_df.label.value_counts()
@@ -97,19 +101,19 @@ def random_over_sampling(train_df,all_image_path):
     count_dict.pop(max_key)
     names = []
     labels = []
-    for key,value in count_dict.items():
+    for key, value in count_dict.items():
         dif = max_class - value
         label_ind = list(index[train_df["label"] == key])
         if len(label_ind) < dif:
-            inds = random.choices(label_ind,k=dif)
+            inds = random.choices(label_ind, k=dif)
             j = 0
             for i in inds:
                 sample = train_df.iloc[i]
-                names.append(str(j)+'_copy_' + sample['id'])
+                names.append(str(j) + '_copy_' + sample['id'])
                 labels.append((sample['label']))
                 im = cv2.imread(os.path.join(os.path.expanduser('~'), all_image_path, sample['id']))
-                cv2.imwrite(os.path.join(os.path.expanduser('~'), all_image_path, str(j)+'_copy_' + sample['id']), im)
-                j = j+1
+                cv2.imwrite(os.path.join(os.path.expanduser('~'), all_image_path, str(j) + '_copy_' + sample['id']), im)
+                j = j + 1
         else:
             inds = random.sample(label_ind, dif)
 
@@ -124,22 +128,19 @@ def random_over_sampling(train_df,all_image_path):
     new_labels = list(train_df.label) + labels
     new_train_df = pd.DataFrame({'id': new_names, 'label': new_labels})
 
-
     return new_train_df
 
-def create_class_weight(labels_dict,n_classes):
+
+def create_class_weight(labels_dict, n_classes):
     total = np.sum(list(labels_dict.values()))
     keys = labels_dict.keys()
     class_weight = dict()
     x = 0
     for key in keys:
-        score = total / (n_classes * np.bincount(labels_dict[key]))
+        y = labels_dict[key]
+        y = y.astype(np.int)
+        score = total / (n_classes * np.bincount(y))
         class_weight[x] = score
-        x+=1
+        x += 1
     return class_weight
-
-
-
-
-
 
