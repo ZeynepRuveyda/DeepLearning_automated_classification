@@ -31,7 +31,7 @@ def create_dataset(dir_zip):
         for img_name in files:
             extension = os.path.splitext(img_name)[1]
             if extension in image_types:
-                im = cv2.imread(os.path.join(os.path.expanduser('~'), f_path, img_name), -1)
+                im = cv2.imread(os.path.join(os.path.expanduser('~'), f_path, img_name))
                 img_name = img_name.replace(".png", ".jpg")
                 im_name = f + "_" + img_name
                 cv2.imwrite(os.path.join(os.path.expanduser('~'), path_all_images, im_name), im)
@@ -107,7 +107,7 @@ def random_over_sampling(train_df,all_image_path):
                 sample = train_df.iloc[i]
                 names.append(str(j)+'_copy_' + sample['id'])
                 labels.append((sample['label']))
-                im = cv2.imread(os.path.join(os.path.expanduser('~'), all_image_path, sample['id']),-1)
+                im = cv2.imread(os.path.join(os.path.expanduser('~'), all_image_path, sample['id']))
                 cv2.imwrite(os.path.join(os.path.expanduser('~'), all_image_path, 'copy_' + sample['id']), im)
                 j = j+1
         else:
