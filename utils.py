@@ -154,6 +154,10 @@ def model_selection(train_generator,validation_generator,im_size,nm_classes):
         model_ = Custom_Model(model_name,im_size,nm_classes)
         # custom modifications on top of pre-trained model
         model_ = model.forward()
+        base_learning_rate = 0.0001
+        model_.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=base_learning_rate),
+                      loss='binary_crossentropy',
+                      metrics=['accuracy'])
         history = model_.fit(train_generator, epochs=3, validation_data=validation_generator,)
 
         model_benchmarks['model_name'].append(model_name)
