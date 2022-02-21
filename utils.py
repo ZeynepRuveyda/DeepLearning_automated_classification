@@ -16,7 +16,7 @@ import tqdm
 import tensorflow as tf
 import inspect
 from model import *
-# Creating csv files for all image with their classes. Classes will be added as folder name of image .
+# Creating csv files for all image with their nm_classes. Classes will be added as folder name of image .
 # Getting all images into a one folder
 # Return two data csv and all images data path.
 from tqdm import tqdm
@@ -66,7 +66,7 @@ def create_dataset(dir_zip):
     df_all = pd.DataFrame({'id': names, 'label': labels})
     parent = Path(images_paths[0]).parent.parent.parent
     path_csv = os.path.join(os.path.expanduser('~'), parent, 'all_data.csv')
-    print("Found %d different class folders. If you have more than %d classes you should split your images as different"
+    print("Found %d different class folders. If you have more than %d nm_classes you should split your images as different"
           " folders in zip file." % (len(df_all.label.unique()), len(df_all.label.unique())))
     df_all.to_csv(path_csv, index=False)
     train_df, test_df = test_train_split(path_csv)
@@ -133,6 +133,9 @@ def random_over_sampling(train_df, all_image_path):
     new_names = list(train_df.id) + names
     new_labels = list(train_df.label) + labels
     new_train_df = pd.DataFrame({'id': new_names, 'label': new_labels})
+    parent = Path(all_image_path).parent
+    path_csv = os.path.join(os.path.expanduser('~'), parent, 'TRAIN_DF.csv')
+    new_train_df.to_csv(path_csv, index=False)
 
     return new_train_df
 

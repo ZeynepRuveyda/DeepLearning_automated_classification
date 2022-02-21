@@ -12,13 +12,13 @@ from sklearn.model_selection import train_test_split
 
 class CustomDataGenerator:
 
-    def __init__(self, images_folder, test_df, train_df, batch_size, target_size):
-        self.images_folder = images_folder
+    def __init__(self, images_folder_dir, test_df, train_df, batch_size, target_size):
+        self.images_folder_dir = images_folder_dir
         self.test_df = test_df
         self.train_df = train_df
         self.batch_size = batch_size
         self.target_size = target_size
-        self.classes = len(self.train_df.label.unique().tolist())
+        self.nm_classes = len(self.train_df.label.unique().tolist())
 
     def data_generator(self):
         with tf.device('/device:GPU:0'):
@@ -39,7 +39,7 @@ class CustomDataGenerator:
             print("Test Dataset : ")
             test_generator = val_datagen.flow_from_dataframe(
                 dataframe= self.test_df,
-                directory=self.images_folder,
+                directory=self.images_folder_dir,
                 x_col="id",
                 y_col="label",
                 target_size=self.target_size,
@@ -51,7 +51,7 @@ class CustomDataGenerator:
             val_generator = val_datagen.flow_from_dataframe(
 
                 dataframe=eval_df,
-                directory=self.images_folder,
+                directory=self.images_folder_dir,
                 x_col="id",
                 y_col="label",
                 target_size=self.target_size,
@@ -62,7 +62,7 @@ class CustomDataGenerator:
             )
         counts = train_df.label.value_counts()
         count_dict = counts.to_dict()
-        class_weights = create_class_weight(count_dict,self.classes)
+        class_weights = create_class_weight(count_dict, self.nm_classes)
 
         if balance_check(self.train_df):
 
@@ -70,7 +70,7 @@ class CustomDataGenerator:
                 print("Training Dataset : ")
                 train_generator = train_datagen.flow_from_dataframe(
                     dataframe=train_df,
-                    directory=self.images_folder,
+                    directory=self.images_folder_dir,
                     x_col="id",
                     y_col="label",
                     target_size=self.target_size,
@@ -79,17 +79,17 @@ class CustomDataGenerator:
                     seed=42,
                     class_mode="categorical"
                 )
-                return train_generator, val_generator, test_generator,self.classes
+                return train_generator, val_generator, test_generator,self.nm_classes
         else:
 
 
             print("Class distribution : %s ,Balancing process is started." % (count_dict))
-            train_df_new = random_over_sampling(train_df,self.images_folder)
+            train_df_new = random_over_sampling(train_df, self.images_folder_dir)
             with tf.device('/device:GPU:0'):
                 print("Training Dataset : ")
                 train_generator = train_datagen.flow_from_dataframe(
                     dataframe=train_df_new,
-                    directory=self.images_folder,
+                    directory=self.images_folder_dir,
                     x_col="id",
                     y_col="label",
                     target_size=(self.target_size, self.target_size),
@@ -102,7 +102,7 @@ class CustomDataGenerator:
                 count_dict = counts.to_dict()
 
                 print("Class distribution : %s ,Data made balance." % (count_dict))
-                return train_generator, val_generator, test_generator, self.classes,class_weights
+                return train_generator, val_generator, test_generator, self.nm_classes, class_weights
 
 
 
