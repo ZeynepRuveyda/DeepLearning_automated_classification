@@ -178,7 +178,7 @@ def model_selection(train_generator,validation_generator,im_size,nm_classes):
 def benchmark_visualization(benchmark_df):
     # Loop over each row and plot the num_model_params vs validation_accuracy
     markers = [".", ",", "o", "v", "^", "<", ">", "1", "2", "3", "4", "8", "s", "p", "P", "*", "h", "H", "+", "x", "X",
-               "D", "d", "|", "_", 4, 5, 6, 7, 8, 9, 10, 11]
+               "D", "d", "|", "_", 4, 5, 6, 7, 8, 9, 10, 11,'$...$']
     plt.figure(figsize=(7, 5))
     for row in benchmark_df.itertuples():
         plt.scatter(row.num_model_params, row.validation_accuracy, label=row.model_name, marker=markers[row.Index],

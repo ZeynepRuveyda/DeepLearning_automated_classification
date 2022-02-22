@@ -37,14 +37,14 @@ class CustomDataGenerator:
             )
             print("Test Dataset : ")
             test_generator = val_datagen.flow_from_dataframe(
-                dataframe= self.test_df,
+                dataframe=self.test_df,
                 directory=self.images_folder_dir,
                 x_col="id",
                 y_col="label",
                 target_size=self.target_size,
                 batch_size=self.batch_size,
                 shuffle=False,
-                class_mode=None
+                class_mode="categorical"
             )
             print("Validation Dataset : ")
             val_generator = val_datagen.flow_from_dataframe(
