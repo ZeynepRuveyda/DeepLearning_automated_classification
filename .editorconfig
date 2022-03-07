@@ -1,11 +1,3 @@
-
-AWS :
-    AWS_ACCESS_KEY_ID: "AKIAZR36UQ3A4JYK626S"
-    AWS_SECRET_ACCESS_KEY: "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"
-    AWS_REGION: "eu-west-3"
-    PATH_CREDENTIALS_S3: "./awscli.ini"
-
-
 DATA:
     AWS_DATASET_PATHS:
         - s3://automi-data-factory/datasets/classif/test1_classif.zip
