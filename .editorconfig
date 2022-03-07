@@ -3,7 +3,7 @@ DATA:
         - s3://automi-data-factory/datasets/classif/test1_classif.zip
         - s3://automi-data-factory/datasets/classif/test2_classif.zip
     DEST: "./data"
-    TASK: "classif" # in ["classif", "od", "seg"]
+    TASK: "classif" 
     OVERWRITEN_CLASS: ""
     SIZE: !!python/tuple [224, 224]
 
