@@ -1,0 +1,57 @@
+
+AWS:
+    AWS_ACCESS_KEY_ID: "AKIAZR36UQ3A4JYK626S"
+    AWS_SECRET_ACCESS_KEY: "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"
+    AWS_REGION: "eu-west-3"
+    PATH_CREDENTIALS_S3: "./awscli.ini"
+
+
+DATA:
+    AWS_DATASET_PATHS:
+        - s3://automi-data-factory/datasets/classif/test1_classif.zip
+        - s3://automi-data-factory/datasets/classif/test2_classif.zip
+    DEST: "./data"
+    TASK: "classif" # in ["classif", "od", "seg"]
+    OVERWRITEN_CLASS: ""
+    SIZE: !!python/tuple [224, 224]
+
+
+SPLIT_DATASET:
+    TEST_SIZE: 0.1
+    TRAIN_SIZE: 0.72
+    EVAL_SIZE: 0.18
+
+DATA GENERATOR:
+    BATCH_SIZE: 32
+    TARGET_SIZE: ""
+    RESCALE: 1./255
+    CLASS_MODE: "categorical" #in ["categorical", "binary"]
+    SHUFFLE: True
+
+TRAIN_DATA_GENERATOR:
+    ROTATION_RANGE: !!python/int 40
+    WIDTH_SHIFT_RANGE: 0.2
+    HEIGHT_SHIFT_RANGE: 0.2
+    SHEAR_RANGE: 0.2
+    ZOOM_RANGE: 0.2
+    HORIZANTAL_FLIP: True #false
+    FILL_MODE: "nearest"  # in ["constant", "nearest", "reflect", "wrap"]
+    SHUFFLE: True
+    SEED: !!python/int 42
+
+TEST_DATA_GENERATOR:
+    SHUFFLE: False
+
+VAL_DATA_GENERATOR:
+    SHUFFLE: True
+    SEED: !!python/int 42
+
+MODEL:
+    NUMBER_OF_CLASS: 2
+    MODEL_NAME: model_name
+    ACTIVATION_FUNCTION: "sigmoid" #choosed from most commonly used activation functions ["sigmoid", "softmax", "ReLU", "Tanh"]
+    WEIGHTS: "imagenet"
+    LOSS: "binary_crossentropy"
+    BASE_LEARNING_RATE: 0.001 #when you are working specific model, if you are using model bencmarking base_learning_rate is 0.0001
+
+
